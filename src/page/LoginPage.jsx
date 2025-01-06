@@ -1,24 +1,25 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: ''
-  });
+  const [username,setUsername]=useState("");
+  const [password,setPassword]=useState("");
+  const [email,setEmail]=useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Add logic to handle form submission, e.g., API call
+
+    const data={
+      email:email,
+      password:password,
+      username:username
+    }
+
+    axios.post(import.meta.env.VITE_SERVER_URL+"auth/register")
+    
+    
+    
   };
 
   return (
@@ -34,11 +35,12 @@ const LoginPage = () => {
             Username
           </label>
           <input
-            type="text"
+            type="text" 
             id="username"
             name="username"
-            value={formData.username}
-            onChange={handleChange}
+            value={username}
+            placeholder='username'
+            onChange={(e)=>{setUsername(e.target.value)}}
             className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             required
           />
@@ -52,8 +54,9 @@ const LoginPage = () => {
             type="email"
             id="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            placeholder='email@.com'
+            onChange={(e)=>{setEmail(e.target.value)}}
             className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             required
           />
@@ -67,8 +70,9 @@ const LoginPage = () => {
             type="password"
             id="password"
             name="password"
-            value={formData.password}
-            onChange={handleChange}
+            placeholder='*******'
+            value={password}
+            onChange={(e)=>{setPassword(e.target.value)}}
             className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             required
           />
@@ -76,6 +80,7 @@ const LoginPage = () => {
 
         <button
           type="submit"
+          
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         >
           Sign In
