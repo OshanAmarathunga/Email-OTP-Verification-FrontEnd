@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Toaster, toast } from "sonner";
 import Alert from "@mui/material/Alert";
 import CheckIcon from "@mui/icons-material/Check";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -13,6 +14,9 @@ const LoginPage = () => {
   const [isDisabled, setIdDisabled] = useState(false);
   const [isAlertOn, setIsAlertOn] = useState(false);
   const [otp, setOtp] = useState("");
+  const navigate = useNavigate();
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(0);
 
   const [open, setOpen] = React.useState(false);
   const handleClose = () => {
@@ -45,6 +49,71 @@ const LoginPage = () => {
         handleClose();
         setIsAlertOn(false);
       });
+  };
+
+  const handleVerifyOTP = (e) => {
+    e.preventDefault();
+    handleOpen();
+    const data = {
+      code: otp,
+      email: email,
+    };
+
+    axios
+      .post(import.meta.env.VITE_SERVER_URL + "/auth/verify-email", data)
+      .then((rsp) => {
+        if (rsp.data.message === "Invalid verification code!") {
+          handleClose();
+          toast.error("Incorrect OTP , Try Again !");
+        } else if (rsp.data.message === "User is already verified") {
+          handleClose();
+          toast.error("User is already verified!");
+        } else {
+          handleClose();
+          toast.success("Email account validation success!");
+          navigate("/welcome");
+        }
+      })
+      .catch((e) => {
+        toast.error("OTP is incorrect !");
+      });
+  };
+
+  const handleResendOTP = (e) => {
+   
+
+    console.log("otp send");
+
+    // handleOpen();
+    // axios.post(import.meta.env.VITE_SERVER_URL+"/auth/resendVerificationCode",{email})
+    // .then((rsp)=>{
+    //   handleClose();
+    //   toast.success("New OTP send success !");
+    // })
+    // .catch((e)=>{
+    //   handleClose();
+    //   console.log("Error",e);
+
+    // })
+  };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    setIsWaiting(true);
+    setSecondsLeft(5);
+    
+     
+    const interval=setInterval(()=>{
+      setSecondsLeft((prevSeconds)=>{
+        if(prevSeconds<1){
+          clearInterval(interval);
+          setIsWaiting(false);
+          handleResendOTP();
+          return 0;
+        }
+        return prevSeconds-1;
+      });
+    },1000)
   };
 
   return (
@@ -97,7 +166,7 @@ const LoginPage = () => {
             id="email"
             name="email"
             value={email}
-            placeholder="email@.com"
+            placeholder="your@email.com"
             disabled={isDisabled}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -165,26 +234,32 @@ const LoginPage = () => {
                 required
               />
             </div>
-            { otp!=""?
+            {otp != "" ? (
               <div>
                 <button
                   type="submit"
-                  disabled={isDisabled}
                   className="w-full bg-green-400 text-white py-2 px-4 rounded-md hover:bg-green-500
                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  onClick={handleVerifyOTP}
                 >
                   Verify OTP
                 </button>
-              </div>:""
-            }
+              </div>
+            ) : (
+              ""
+            )}
             <div>
               <button
                 type="submit"
-                disabled={isDisabled}
-                className="w-full bg-green-400 text-white py-2 px-4 rounded-md hover:bg-green-500
-               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                onClick={handleClick}
+                disabled={isWaiting}
+                className={`w-full text-white py-2 px-4 rounded-md ${
+                  isWaiting
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-400 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                }`}
               >
-                Resend OTP
+                {isWaiting ? `Wait ${secondsLeft}s` : "Resend OTP"}
               </button>
             </div>
           </div>

@@ -3,6 +3,8 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import LoginPage from "./page/LoginPage";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import WelcomePage from "./page/WelcomePage";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -10,7 +12,15 @@ function App() {
   return (
     <>
       <div >
-       <LoginPage/>
+        <BrowserRouter>
+          <Routes>
+            
+            <Route path="/" element={<LoginPage/>} />
+            <Route path="/welcome" element={<WelcomePage/>} />
+
+          </Routes>
+        </BrowserRouter>
+       
       </div>
     </>
   );
