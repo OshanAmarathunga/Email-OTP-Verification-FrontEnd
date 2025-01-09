@@ -98,7 +98,7 @@ const LoginPage = () => {
   const handleClick = (e) => {
     e.preventDefault();
     setIsWaiting(true);
-    setSecondsLeft(30);
+    setSecondsLeft(60);
     handleResendOTP();
     
      
