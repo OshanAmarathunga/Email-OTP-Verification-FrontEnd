@@ -82,25 +82,24 @@ const LoginPage = () => {
   const handleResendOTP = (e) => {
    
 
-    console.log("otp send");
+    handleOpen();
+    axios.post(import.meta.env.VITE_SERVER_URL+"/auth/resendVerificationCode",{email})
+    .then((rsp)=>{
+      handleClose();
+      toast.success("New OTP send success !");
+    })
+    .catch((e)=>{
+      handleClose();
+      console.log("Error",e);
 
-    // handleOpen();
-    // axios.post(import.meta.env.VITE_SERVER_URL+"/auth/resendVerificationCode",{email})
-    // .then((rsp)=>{
-    //   handleClose();
-    //   toast.success("New OTP send success !");
-    // })
-    // .catch((e)=>{
-    //   handleClose();
-    //   console.log("Error",e);
-
-    // })
+    })
   };
 
   const handleClick = (e) => {
     e.preventDefault();
     setIsWaiting(true);
-    setSecondsLeft(5);
+    setSecondsLeft(30);
+    handleResendOTP();
     
      
     const interval=setInterval(()=>{
@@ -108,7 +107,7 @@ const LoginPage = () => {
         if(prevSeconds<1){
           clearInterval(interval);
           setIsWaiting(false);
-          handleResendOTP();
+          
           return 0;
         }
         return prevSeconds-1;
