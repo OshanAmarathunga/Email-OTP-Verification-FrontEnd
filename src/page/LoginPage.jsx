@@ -35,6 +35,8 @@ const LoginPage = () => {
       password: password,
       name: username,
     };
+    console.log("data",data);
+    
 
     axios
       .post(import.meta.env.VITE_SERVER_URL + "/auth/register", data)
