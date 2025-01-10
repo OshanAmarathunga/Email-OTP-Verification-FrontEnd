@@ -45,7 +45,7 @@ const LoginPage = () => {
         setIsAlertOn(true);
       })
       .catch((e) => {
-        toast.error("Already registered Email !");
+        toast.error("Server Error!");
         handleClose();
         setIsAlertOn(false);
       });
